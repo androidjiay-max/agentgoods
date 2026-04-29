@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  balance   Float    @default(0) // Total fiat/crypto deposited
+  agents    Agent[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Agent {
+  id           String              @id @default(cuid())
+  name         String
+  apiKey       String              @unique // The unique token the agent uses
+  userId       String
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  maxBudget    Float               @default(0)
+  currentSpend Float               @default(0)
+  transactions LedgerTransaction[]
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+}
+
+model Product {
+  id             String              @id @default(cuid())
+  name           String
+  description    String
+  price          Float
+  schemaString   String?             // OpenAI Tool/Function calling JSON schema string
+  isSubscription Boolean             @default(false)
+  isAvailable    Boolean             @default(true)
+  transactions   LedgerTransaction[]
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+}
+
+model LedgerTransaction {
+  id        String   @id @default(cuid())
+  agentId   String
+  agent     Agent    @relation(fields: [agentId], references: [id])
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id])
+  amount    Float
+  type      String   // DEPOSIT, PURCHASE, REFUND
+  createdAt DateTime @default(now())
+}
