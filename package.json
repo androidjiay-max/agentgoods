@@ -4,19 +4,21 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
+    "postinstall": "prisma generate",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --import tsx --test src/lib/__tests__/core.test.ts",
+    "test:watch": "node --import tsx --test --watch src/lib/__tests__/core.test.ts",
+    "seed": "npx tsx prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
-    "clsx": "^2.1.1",
-    "date-fns": "^4.1.0",
+    "@supabase/ssr": "^0.10.2",
     "lucide-react": "^1.11.0",
     "next": "16.2.4",
     "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "tailwind-merge": "^3.5.0"
+    "react-dom": "19.2.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -27,6 +29,7 @@
     "eslint-config-next": "16.2.4",
     "prisma": "^6.19.3",
     "tailwindcss": "^4",
+    "tsx": "^4",
     "typescript": "^5"
   }
 }
