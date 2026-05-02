@@ -232,7 +232,6 @@ export async function depositFunds(dollars: number): Promise<ActionResult> {
     }
     logger.error("Deposit error", {
       error: err instanceof Error ? err.message : String(err),
-      userId,
     });
     return { success: false, error: "An unexpected error occurred. Please try again." };
   }
@@ -283,7 +282,6 @@ export async function createAgent(
     }
     logger.error("Agent creation error", {
       error: err instanceof Error ? err.message : String(err),
-      userId,
     });
     return { success: false, error: "An unexpected error occurred. Please try again." };
   }
