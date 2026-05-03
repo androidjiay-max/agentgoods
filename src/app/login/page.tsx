@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { Bot, LogIn, UserPlus, AlertCircle, CheckCircle2 } from "lucide-react"
@@ -26,21 +26,6 @@ export default function LoginPage() {
   const [success, setSuccess] = useState("")
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-
-  // Handle OAuth callback: if URL has ?code=, exchange for session
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const code = params.get("code")
-    if (code) {
-      const supabase = createClient()
-      supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
-        if (!error) {
-          router.push("/")
-          router.refresh()
-        }
-      })
-    }
-  }, [router])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
