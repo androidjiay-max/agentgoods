@@ -362,7 +362,7 @@ function DepositPanel() {
     <div className="glass rounded-2xl p-6 border border-neon-purple/20 bg-gradient-to-r from-neon-purple/5 to-transparent mb-6">
       <div className="flex flex-wrap items-center gap-3">
         <DollarSign size={18} className="text-neon-purple" />
-        <span className="text-sm font-bold uppercase tracking-wide text-gray-300 mr-2">Add Funds</span>
+        <span className="text-sm font-bold uppercase tracking-wide text-gray-300 mr-2">{t("deposit.title")}</span>
 
         {[10, 50, 100, 500].map((amount) => (
           <button key={amount} onClick={() => doDeposit(amount)} disabled={status === "loading"}
@@ -373,7 +373,7 @@ function DepositPanel() {
 
         <div className="h-8 w-px bg-gray-800 hidden sm:block" />
 
-        <input type="number" min="0.01" max="10000" step="0.01" placeholder="Custom…"
+        <input type="number" min="0.01" max="10000" step="0.01" placeholder={t("dashboard.custom_")}
           className="w-32 bg-black/50 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:border-neon-purple outline-none"
           value={customAmount} onChange={(e) => setCustomAmount(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleCustom()} />
@@ -482,7 +482,7 @@ function SellerProducts({
 
   if (products.length === 0) {
     return (
-      <EmptyState icon={Store} title="No products listed yet"
+      <EmptyState icon={Store} title={t("dashboard.noProducts")}
         description="Publish your first API product. Agents will discover and purchase it automatically through the catalog."
       />
     )
@@ -493,15 +493,15 @@ function SellerProducts({
       {/* Seller KPI bar */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div className="glass rounded-2xl p-4 border border-green-500/20">
-          <p className="text-[11px] text-gray-500 uppercase tracking-wider mb-1">Total Earnings</p>
+          <p className="text-[11px] text-gray-500 uppercase tracking-wider mb-1">{t("dashboard.totalEarnings")}</p>
           <p className="text-2xl font-mono text-green-400 font-bold">+${fmtCents(totalEarnings)}</p>
         </div>
         <div className="glass rounded-2xl p-4 border border-neon-blue/20">
-          <p className="text-[11px] text-gray-500 uppercase tracking-wider mb-1">Products Listed</p>
+          <p className="text-[11px] text-gray-500 uppercase tracking-wider mb-1">{t("dashboard.productsListed")}</p>
           <p className="text-2xl font-mono font-bold">{products.length}</p>
         </div>
         <div className="glass rounded-2xl p-4 border border-neon-purple/20">
-          <p className="text-[11px] text-gray-500 uppercase tracking-wider mb-1">Total Sales</p>
+          <p className="text-[11px] text-gray-500 uppercase tracking-wider mb-1">{t("dashboard.totalSales")}</p>
           <p className="text-2xl font-mono font-bold">{totalSales}</p>
         </div>
       </div>
@@ -538,10 +538,11 @@ function MarketplaceCatalog({
   currentUserId: string
   onDelete?: (id: string) => void
 }) {
+  const { t } = useI18n()
   if (products.length === 0) {
     return (
-      <EmptyState icon={Package} title="Marketplace is empty"
-        description="No products have been published yet. Be the first seller!"
+      <EmptyState icon={Package} title={t("dashboard.marketplaceEmpty")}
+        description={t("dashboard.marketplaceEmptyDesc")}
       />
     )
   }
@@ -580,6 +581,7 @@ function ProductCard({
   currentUserId?: string
   onDelete?: (id: string) => void
 }) {
+  const { t } = useI18n()
   const toast = useToast()
   const isOfficial = !product.ownerId
   const isOwn = product.ownerId === currentUserId
@@ -591,15 +593,15 @@ function ProductCard({
         <div className="absolute top-3 left-3 z-10">
           {isOfficial ? (
             <span className="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-neon-blue/10 text-neon-blue border border-neon-blue/20">
-              <BadgeCheck size={11} /> Official
+              <BadgeCheck size={11} /> {t("dashboard.official")}
             </span>
           ) : isOwn ? (
             <span className="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 border border-green-500/20">
-              <Shield size={11} /> Your SKU
+              <Shield size={11} /> {t("dashboard.yourSKU")}
             </span>
           ) : (
             <span className="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-white/5 text-gray-500 border border-gray-700">
-              <Users size={11} /> Seller
+              <Users size={11} /> {t("dashboard.seller_")}
             </span>
           )}
         </div>
@@ -614,7 +616,7 @@ function ProductCard({
           <h3 className="font-bold text-sm truncate">{product.name}</h3>
           {product.isSubscription && (
             <span className="text-[11px] px-1.5 py-0.5 rounded bg-neon-purple/15 text-neon-purple border border-neon-purple/20 uppercase tracking-wide">
-              Subscription
+              {t("dashboard.subscription")}
             </span>
           )}
         </div>
@@ -633,7 +635,7 @@ function ProductCard({
       {/* Stats row */}
       <div className="flex items-center gap-3 mb-3 text-[11px] text-gray-600">
         <span className="flex items-center gap-1">
-          <ShoppingCart size={11} /> {purchases} sold
+          <ShoppingCart size={11} /> {purchases} {t("dashboard.sold")}
         </span>
         {revenue > 0 && (
           <span className="flex items-center gap-1 text-green-500/70">
@@ -672,10 +674,11 @@ function ProductCard({
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function LedgerTable({ transactions }: { transactions: TransactionWithRelations[] }) {
+  const { t } = useI18n()
   if (transactions.length === 0) {
     return (
-      <EmptyState icon={Activity} title="No transactions yet"
-        description="Deposit funds or make purchases — every action will appear here."
+      <EmptyState icon={Activity} title={t("dashboard.noTransactions")}
+        description={t("dashboard.noTransactionsDesc")}
       />
     )
   }
@@ -683,10 +686,10 @@ function LedgerTable({ transactions }: { transactions: TransactionWithRelations[
   return (
     <div className="space-y-1">
       <div className="hidden sm:grid grid-cols-[1fr_100px_100px_100px] gap-4 px-4 py-2 text-[11px] uppercase tracking-wider text-gray-600">
-        <span>Detail</span>
-        <span className="text-right">Type</span>
-        <span className="text-right">Amount</span>
-        <span className="text-right">Time</span>
+        <span>{t("ledger.detail")}</span>
+        <span className="text-right">{t("ledger.type")}</span>
+        <span className="text-right">{t("ledger.amount")}</span>
+        <span className="text-right">{t("ledger.time")}</span>
       </div>
 
       {transactions.map((tx) => (
@@ -694,7 +697,7 @@ function LedgerTable({ transactions }: { transactions: TransactionWithRelations[
           className="grid grid-cols-1 sm:grid-cols-[1fr_100px_100px_100px] gap-x-4 gap-y-2 sm:gap-y-0 items-center px-4 py-3 rounded-xl hover:bg-white/[0.02] border border-transparent hover:border-gray-800/50 transition-all">
           <div className="text-sm min-w-0">
             {tx.type === "DEPOSIT" ? (
-              <span className="text-gray-300"><span className="text-green-400 font-medium">Deposit</span> to Wallet</span>
+              <span className="text-gray-300"><span className="text-green-400 font-medium">{t("ledger.deposit")}</span> {t("ledger.depositDesc")}</span>
             ) : tx.type === "REFUND" ? (
               <span className="text-gray-300"><span className="text-yellow-400 font-medium">Refund</span> {tx.product?.name ?? "N/A"}</span>
             ) : (
