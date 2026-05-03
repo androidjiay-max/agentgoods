@@ -8,9 +8,10 @@ import {
   Bot, Package, Activity, Key, Trash2, CreditCard,
   Server, X, DollarSign, AlertCircle, CheckCircle2, Copy, Sparkles,
   ChevronDown, Zap, Store, TrendingUp, Shield, ShoppingCart,
-  BadgeCheck, Users, BarChart3, Wallet, LogOut
+  BadgeCheck, Users, BarChart3, Wallet, LogOut, Languages
 } from "lucide-react"
 import { useToast } from "@/components/toast"
+import { useI18n } from "@/lib/i18n/provider"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 
@@ -53,6 +54,7 @@ export default function DashboardClient({
   user, agents, myProducts, allProducts, transactions,
   buyerTransactions, productStats, platformRevenue,
 }: DashboardClientProps) {
+  const { t, toggleLang } = useI18n()
   const toast = useToast()
   const [role, setRole] = useState<Role>("buyer")
   const [activeTab, setActiveTab] = useState<string>("agents")
@@ -92,7 +94,7 @@ export default function DashboardClient({
         {/* KPI Cards */}
         <div className="flex gap-3 w-full sm:w-auto">
           <div className="flex-1 sm:flex-initial glass px-4 py-2.5 rounded-xl border border-neon-blue/20">
-            <p className="text-[11px] text-gray-500 uppercase tracking-wider">Wallet</p>
+            <p className="text-[11px] text-gray-500 uppercase tracking-wider">{t("common.wallet")}</p>
             <p className="text-xl font-mono font-bold">
               ${fmtCents(user.balance)}
             </p>
@@ -103,22 +105,28 @@ export default function DashboardClient({
             )}
           </div>
           <div className="flex-1 sm:flex-initial glass px-4 py-2.5 rounded-xl border border-green-500/20">
-            <p className="text-[11px] text-green-500/70 uppercase tracking-wider">Earnings</p>
+            <p className="text-[11px] text-green-500/70 uppercase tracking-wider">{t("common.earnings")}</p>
             <p className="text-xl font-mono text-green-400 font-bold">
               +${fmtCents(user.earnings)}
             </p>
           </div>
 
-          {/* User + Logout */}
-          <div className="flex items-center gap-3">
+          {/* User + Language + Logout */}
+          <div className="flex items-center gap-2">
+            <button onClick={toggleLang}
+              className="flex items-center gap-1 text-xs text-gray-500 hover:text-neon-blue transition-colors"
+              title="Switch language">
+              <Languages size={14} />
+              <span className="hidden sm:inline">{t("langSwitch")}</span>
+            </button>
             <span className="text-[11px] text-gray-500 hidden sm:block">{user.email}</span>
             <button
               onClick={handleLogout}
               className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-red-400 transition-colors"
-              title="Sign out"
+              title={t("common.signOut")}
             >
               <LogOut size={14} />
-              <span className="hidden sm:inline">Sign out</span>
+              <span className="hidden sm:inline">{t("common.signOut")}</span>
             </button>
           </div>
         </div>
@@ -128,8 +136,8 @@ export default function DashboardClient({
       <div className="flex items-center gap-6 py-4 border-b border-gray-800/50">
         <div className="flex bg-white/5 rounded-xl p-1 gap-1">
           {([
-            { id: "buyer" as Role, label: "Buyer", icon: ShoppingCart, desc: "Agents & Spending" },
-            { id: "seller" as Role, label: "Seller", icon: Store, desc: "Products & Revenue" },
+            { id: "buyer" as Role, label: t("dashboard.buyer"), icon: ShoppingCart, desc: t("dashboard.buyerDesc") },
+            { id: "seller" as Role, label: t("dashboard.seller"), icon: Store, desc: t("dashboard.sellerDesc") },
           ]).map((r) => {
             const Icon = r.icon
             const isActive = role === r.id
@@ -165,14 +173,14 @@ export default function DashboardClient({
                     : "bg-white/5 text-gray-300 border-gray-700 hover:border-gray-500"
                 }`}
               >
-                <CreditCard size={16} /> Deposit
+                <CreditCard size={16} /> {t("dashboard.deposit")}
                 <ChevronDown size={14} className={`transition-transform ${showDeposit ? "rotate-180" : ""}`} />
               </button>
               <button
                 onClick={() => setShowAgentModal(true)}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-neon-blue/10 text-neon-blue border border-neon-blue/30 hover:bg-neon-blue/20 transition-all"
               >
-                <Zap size={16} /> New Agent
+                <Zap size={16} /> {t("dashboard.newAgent")}
               </button>
             </>
           )}
@@ -181,7 +189,7 @@ export default function DashboardClient({
               onClick={() => setShowProductModal(true)}
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-neon-purple/10 text-neon-purple border border-neon-purple/30 hover:bg-neon-purple/20 transition-all"
             >
-              <Store size={16} /> Publish SKU
+              <Store size={16} /> {t("dashboard.publishSKU")}
             </button>
           )}
 
@@ -199,9 +207,9 @@ export default function DashboardClient({
       {role === "buyer" && (
         <TabBar
           tabs={[
-            { id: "agents", label: "My Agents", icon: Bot },
-            { id: "buyer-marketplace", label: "Marketplace", icon: BarChart3 },
-            { id: "transactions", label: "Transactions", icon: Activity },
+            { id: "agents", label: t("dashboard.agents"), icon: Bot },
+            { id: "buyer-marketplace", label: t("dashboard.marketplace"), icon: BarChart3 },
+            { id: "transactions", label: t("dashboard.transactions"), icon: Activity },
           ]}
           active={activeTab}
           onChange={setActiveTab}
@@ -210,9 +218,9 @@ export default function DashboardClient({
       {role === "seller" && (
         <TabBar
           tabs={[
-            { id: "my-products", label: "My Products", icon: Package },
-            { id: "catalog", label: "Marketplace", icon: BarChart3 },
-            { id: "sales-ledger", label: "Sales Ledger", icon: Activity },
+            { id: "my-products", label: t("dashboard.myProducts"), icon: Package },
+            { id: "catalog", label: t("dashboard.marketplace"), icon: BarChart3 },
+            { id: "sales-ledger", label: t("dashboard.salesLedger"), icon: Activity },
           ]}
           active={activeTab}
           onChange={setActiveTab}
@@ -327,6 +335,7 @@ function TabBar({
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function DepositPanel() {
+  const { t } = useI18n()
   const toast = useToast()
   const [customAmount, setCustomAmount] = useState("")
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
@@ -386,12 +395,13 @@ function DepositPanel() {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function AgentsList({ agents, onDelete }: { agents: Agent[]; onDelete: (id: string) => void }) {
+  const { t } = useI18n()
   const toast = useToast()
 
   if (agents.length === 0) {
     return (
-      <EmptyState icon={Bot} title="No AI Agents yet"
-        description="Create your first Agent to start making purchases through the M2M gateway. Each Agent gets a unique API key and a spend budget."
+      <EmptyState icon={Bot} title={t("dashboard.noAgents")}
+        description={t("dashboard.noAgentsDesc")}
       />
     )
   }
@@ -466,6 +476,7 @@ function SellerProducts({
   totalEarnings: number
   onDelete?: (id: string) => void
 }) {
+  const { t } = useI18n()
   // Compute summary
   const totalSales = products.reduce((sum, p) => sum + (stats[p.id]?.purchases ?? 0), 0)
 
