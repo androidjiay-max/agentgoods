@@ -759,6 +759,7 @@ function EmptyState({
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function CreateAgentModal({ onClose }: { onClose: () => void }) {
+  const { t } = useI18n()
   const toast = useToast()
   const [name, setName] = useState("")
   const [budget, setBudget] = useState(100)
@@ -781,10 +782,9 @@ function CreateAgentModal({ onClose }: { onClose: () => void }) {
             <div className="w-14 h-14 rounded-full bg-green-500/10 border border-green-500/30 flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 size={28} className="text-green-400" />
             </div>
-            <h3 className="text-xl font-bold mb-1">Agent Created</h3>
+            <h3 className="text-xl font-bold mb-1">{t("agent.created")}</h3>
             <p className="text-sm text-gray-400 mb-6">
-              <span className="text-white font-medium">{created.name}</span> is ready.
-              Copy the API key — <strong>shown only once</strong>.
+              <span className="text-white font-medium">{created.name}</span> {t("agent.createdDesc")}
             </p>
             <div className="bg-black/60 border border-neon-blue/30 rounded-xl p-4 mb-4 font-mono text-sm text-neon-blue break-all select-all">
               {created.apiKey}
@@ -792,11 +792,11 @@ function CreateAgentModal({ onClose }: { onClose: () => void }) {
             <div className="flex gap-3 justify-center">
               <button onClick={() => { navigator.clipboard.writeText(created.apiKey); toast.addToast("Copied!") }}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-neon-blue/20 text-neon-blue border border-neon-blue/30 hover:bg-neon-blue/30 transition-all text-sm font-medium">
-                <Copy size={15} /> Copy Key
+                <Copy size={15} /> {t("agent.copyKey")}
               </button>
               <button onClick={onClose}
                 className="px-5 py-2.5 rounded-xl bg-white/5 text-gray-300 border border-gray-700 hover:bg-white/10 transition-all text-sm">
-                Done
+                {t("agent.done")}
               </button>
             </div>
           </div>
@@ -823,20 +823,20 @@ function CreateAgentModal({ onClose }: { onClose: () => void }) {
             <div className="w-10 h-10 rounded-xl bg-neon-blue/10 border border-neon-blue/20 flex items-center justify-center">
               <Bot size={20} className="text-neon-blue" />
             </div>
-            <h3 className="text-lg font-bold">Create AI Agent</h3>
+            <h3 className="text-lg font-bold">{t("agent.createTitle")}</h3>
           </div>
           <button onClick={onClose} className="text-gray-600 hover:text-white p-1"><X size={20} /></button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1.5">Agent Name</label>
-            <input ref={inputRef} type="text" placeholder="e.g. Shopping Bot, Data Miner…"
+            <label className="block text-sm font-medium text-gray-400 mb-1.5">{t("agent.name")}</label>
+            <input ref={inputRef} type="text" placeholder={t("agent.namePlaceholder")}
               className="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:border-neon-blue outline-none"
               value={name} onChange={(e) => setName(e.target.value)} maxLength={200} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1.5">Monthly Budget (USD)</label>
+            <label className="block text-sm font-medium text-gray-400 mb-1.5">{t("agent.budget")}</label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm">$</span>
               <input type="number" min={1} max={100000}
@@ -846,10 +846,10 @@ function CreateAgentModal({ onClose }: { onClose: () => void }) {
           </div>
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose}
-              className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 text-gray-400 border border-gray-700 hover:bg-white/10 text-sm">Cancel</button>
+              className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 text-gray-400 border border-gray-700 hover:bg-white/10 text-sm">{t("common.cancel")}</button>
             <button type="submit" disabled={loading}
               className="flex-1 px-4 py-2.5 rounded-xl bg-neon-blue text-black font-bold hover:bg-neon-blue/90 text-sm disabled:opacity-50 flex items-center justify-center gap-2">
-              {loading ? "Creating…" : <><Sparkles size={15} /> Create Agent</>}
+              {loading ? t("agent.creating") : <><Sparkles size={15} /> {t("agent.createBtn")}</>}
             </button>
           </div>
         </form>
@@ -863,6 +863,7 @@ function CreateAgentModal({ onClose }: { onClose: () => void }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function CreateProductModal({ onClose }: { onClose: () => void }) {
+  const { t } = useI18n()
   const toast = useToast()
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
@@ -898,27 +899,27 @@ function CreateProductModal({ onClose }: { onClose: () => void }) {
             <div className="w-10 h-10 rounded-xl bg-neon-purple/10 border border-neon-purple/20 flex items-center justify-center">
               <Store size={20} className="text-neon-purple" />
             </div>
-            <h3 className="text-lg font-bold">Publish Digital Good</h3>
+            <h3 className="text-lg font-bold">{t("product.createTitle")}</h3>
           </div>
           <button onClick={onClose} className="text-gray-600 hover:text-white p-1"><X size={20} /></button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1.5">Product Name</label>
-            <input ref={inputRef} type="text" placeholder="e.g. Weather API, Stock Data…"
+            <label className="block text-sm font-medium text-gray-400 mb-1.5">{t("product.name")}</label>
+            <input ref={inputRef} type="text" placeholder={t("product.namePlaceholder")}
               className="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:border-neon-purple outline-none"
               value={name} onChange={(e) => setName(e.target.value)} maxLength={200} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1.5">Description</label>
-            <textarea placeholder="What does this API provide?"
+            <label className="block text-sm font-medium text-gray-400 mb-1.5">{t("product.description")}</label>
+            <textarea placeholder={t("product.descPlaceholder")}
               className="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:border-neon-purple outline-none resize-none"
               rows={3} value={description} onChange={(e) => setDescription(e.target.value)} maxLength={500} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-1.5">Price (USD)</label>
+              <label className="block text-sm font-medium text-gray-400 mb-1.5">{t("product.price")}</label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm">$</span>
                 <input type="number" min={0.01} step={0.01}
@@ -937,7 +938,7 @@ function CreateProductModal({ onClose }: { onClose: () => void }) {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-1.5">
-              OpenSchema JSON <span className="text-gray-600 font-normal">(optional)</span>
+              {t("product.schema")} <span className="text-gray-600 font-normal">({t("product.schemaOptional")})</span>
             </label>
             <textarea placeholder='{"type":"object","properties":{"query":{"type":"string"}}}'
               className="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-2.5 text-xs font-mono focus:border-neon-purple outline-none resize-none"
@@ -945,10 +946,10 @@ function CreateProductModal({ onClose }: { onClose: () => void }) {
           </div>
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose}
-              className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 text-gray-400 border border-gray-700 hover:bg-white/10 text-sm">Cancel</button>
+              className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 text-gray-400 border border-gray-700 hover:bg-white/10 text-sm">{t("common.cancel")}</button>
             <button type="submit" disabled={loading}
               className="flex-1 px-4 py-2.5 rounded-xl bg-neon-purple text-white font-bold hover:bg-neon-purple/90 text-sm disabled:opacity-50 flex items-center justify-center gap-2">
-              {loading ? "Publishing…" : <><Sparkles size={15} /> Publish</>}
+              {loading ? t("product.publishing") : <><Sparkles size={15} /> {t("product.publishBtn")}</>}
             </button>
           </div>
         </form>
