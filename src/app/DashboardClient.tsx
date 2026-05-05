@@ -8,7 +8,7 @@ import {
   Bot, Package, Activity, Key, Trash2, CreditCard,
   Server, X, DollarSign, AlertCircle, CheckCircle2, Copy, Sparkles,
   ChevronDown, Zap, Store, TrendingUp, Shield, ShoppingCart,
-  BadgeCheck, Users, BarChart3, Wallet, LogOut, Languages
+  BadgeCheck, Users, BarChart3, Wallet, LogOut, Languages, Pencil
 } from "lucide-react"
 import { useToast } from "@/components/toast"
 import { useI18n } from "@/lib/i18n/provider"
@@ -589,8 +589,8 @@ function ProductCard({
   const isOwn = product.ownerId === currentUserId
 
   return (
-    <div onClick={() => setExpanded(!expanded)}
-      className={`panel rounded-lg border border-gray-800 hover:border-neon-purple/20 transition-all group relative cursor-pointer ${expanded ? "p-5" : "p-5"}`}>
+    <div
+      className={`panel rounded-lg border border-gray-800 hover:border-neon-purple/20 transition-all group relative ${expanded ? "p-5" : "p-5"}`}>
       {/* Owner badge */}
       {showOwner && (
         <div className="absolute top-3 left-3 z-10">
@@ -657,21 +657,28 @@ function ProductCard({
         </p>
       </div>
 
-      {/* Action buttons (own products only) */}
+      {/* Action bar (own products only) */}
       {isOwn && (
-        <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
-          <button onClick={(e) => { e.stopPropagation(); setExpanded(!expanded) }}
-            className="text-gray-600 hover:text-neon-blue p-1" title="Toggle details">
-            <ChevronDown size={15} className={`transition-transform ${expanded ? "rotate-180" : ""}`} />
+        <div className="flex gap-1 pt-3 border-t border-border-subtle mt-3">
+          <button onClick={() => setExpanded(!expanded)}
+            className="flex items-center gap-1 px-3 py-1.5 rounded text-[11px] font-mono text-gray-400 hover:text-neon-blue hover:bg-neon-blue/5 border border-transparent hover:border-neon-blue/20 transition-all">
+            <ChevronDown size={12} className={`transition-transform ${expanded ? "rotate-180" : ""}`} />
+            Detail
           </button>
-          <button onClick={async (e) => {
-            e.stopPropagation()
+          <button onClick={() => setEditing(true)}
+            className="flex items-center gap-1 px-3 py-1.5 rounded text-[11px] font-mono text-gray-400 hover:text-neon-purple hover:bg-neon-purple/5 border border-transparent hover:border-neon-purple/20 transition-all">
+            <Pencil size={12} />
+            Edit
+          </button>
+          <button onClick={async () => {
             if (!confirm(`Delete "${product.name}"?`)) return
             onDelete?.(product.id)
             const r = await deleteProduct(product.id)
             if (!r.success) toast.addToast(r.error ?? "Deletion failed.", "error")
-          }} className="text-gray-700 hover:text-red-500 p-1" title="Delete">
-            <Trash2 size={15} />
+          }}
+            className="flex items-center gap-1 px-3 py-1.5 rounded text-[11px] font-mono text-gray-400 hover:text-red-400 hover:bg-red-500/5 border border-transparent hover:border-red-500/20 transition-all ml-auto">
+            <Trash2 size={12} />
+            Delete
           </button>
         </div>
       )}
