@@ -31,6 +31,7 @@ export const dict = {
       signInLink: "Sign in",
       noAccountHint: "No account? Create one in Supabase Dashboard → Authentication → Users → Add User",
       checkEmail: "Account created! Check your email for a confirmation link, or sign in now if auto-confirmed.",
+      whatIs: "What is AgentGoods? →",
     },
     dashboard: {
       title: "AGENTGOODS",
@@ -162,6 +163,7 @@ export const dict = {
       signInLink: "去登录",
       noAccountHint: "没有账号？在 Supabase 控制台 → Authentication → Users → Add User 创建",
       checkEmail: "账号已创建！查看邮箱确认链接，如果开启了自动确认可直接登录。",
+      whatIs: "AgentGoods 是什么？→",
     },
     dashboard: {
       title: "AGENTGOODS",

@@ -132,6 +132,13 @@ export default function LoginPage() {
         </form>
 
         <p className="text-center text-[11px] text-gray-600 mt-4">
+          <a href="https://agentgoods.shop" target="_blank" rel="noopener noreferrer"
+            className="text-gray-500 hover:text-neon-blue transition-colors">
+            {t("login.whatIs")}
+          </a>
+        </p>
+
+        <p className="text-center text-[11px] text-gray-600 mt-3">
           {mode === "signup" ? t("login.hasAccount") : t("login.noAccount")}{" "}
           <button onClick={() => setMode(mode === "signup" ? "signin" : "signup")}
             className="text-neon-blue hover:underline">
