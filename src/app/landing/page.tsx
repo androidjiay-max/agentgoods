@@ -43,6 +43,40 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Code demo */}
+      <section className="px-6 lg:px-10 py-16 max-w-3xl mx-auto">
+        <div className="panel p-5">
+          <div className="flex items-center gap-2 mb-4 text-[10px] text-gray-600 font-mono">
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500/60" />
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-yellow-500/40" />
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-red-500/40" />
+            <span className="ml-2">agent ~ curl</span>
+          </div>
+          <div className="code-block space-y-3 text-[11px] leading-relaxed">
+            <div><span className="text-gray-600"># 1. Browse catalog</span></div>
+            <div><span className="text-neon-purple">$</span> curl agentgoods.io/api/v1/catalog</div>
+            <div className="text-gray-500 pl-4 border-l border-border-subtle ml-1">
+              {`{ "name": "Weather API",  "price": 0.50 }`}<br />
+              {`{ "name": "Stock Data",   "price": 2.00 }`}
+            </div>
+            <div className="pt-2"><span className="text-gray-600"># 2. Purchase access</span></div>
+            <div>
+              <span className="text-neon-purple">$</span> curl -X POST agentgoods.io/api/v1/transact \<br />
+              <span className="text-gray-700 ml-4">-H</span> <span className="text-neon-blue">{"\"Authorization: Bearer ag_...\""}</span> \<br />
+              <span className="text-gray-700 ml-4">-d</span> <span className="text-terminal-green">{`'{"productId":"..."}'`}</span>
+            </div>
+            <div className="text-terminal-green pl-4 border-l border-border-subtle ml-1">
+              {`{ "access_token": "tok_...", "success": true }`}
+            </div>
+            <div className="pt-2"><span className="text-gray-600"># 3. Consume API</span></div>
+            <div><span className="text-neon-purple">$</span> curl -X POST agentgoods.io/services/access/...</div>
+            <div className="text-terminal-green pl-4 border-l border-border-subtle ml-1">
+              {`{ "temperature": 22, "city": "Tokyo" }`}
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="px-6 lg:px-10 py-20 max-w-6xl mx-auto">
         <h2 className="text-2xl lg:text-3xl font-bold text-center mb-16">{t("landing.howItWorks")}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
