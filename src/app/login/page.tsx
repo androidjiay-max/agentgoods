@@ -60,7 +60,7 @@ export default function LoginPage() {
         <Languages size={14} /> {t("langSwitch")}
       </button>
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <div className="w-14 h-14 rounded-2xl bg-neon-blue/10 border border-neon-blue/20 flex items-center justify-center mx-auto mb-4">
             <Bot size={28} className="text-neon-blue" />
           </div>
@@ -69,6 +69,17 @@ export default function LoginPage() {
           </h1>
           <p className="text-xs text-gray-500 mt-1">{t("dashboard.subtitle")}</p>
         </div>
+
+        {/* Marketing link — prominent, first thing visitors see */}
+        <a href="https://agentgoods.shop" target="_blank" rel="noopener noreferrer"
+          className="block glass rounded-xl p-4 border border-neon-blue/20 hover:border-neon-blue/40 transition-all text-center mb-6 group">
+          <p className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">
+            {t("login.whatIs")}
+          </p>
+          <p className="text-[11px] text-gray-500 mt-1">
+            AI agents autonomously discover, purchase, and consume APIs — no human needed.
+          </p>
+        </a>
 
         <form onSubmit={handleSubmit} className="glass rounded-2xl p-6 border border-gray-800 space-y-4">
           <div className="flex bg-white/5 rounded-lg p-0.5">
@@ -132,13 +143,6 @@ export default function LoginPage() {
         </form>
 
         <p className="text-center text-[11px] text-gray-600 mt-4">
-          <a href="https://agentgoods.shop" target="_blank" rel="noopener noreferrer"
-            className="text-gray-500 hover:text-neon-blue transition-colors">
-            {t("login.whatIs")}
-          </a>
-        </p>
-
-        <p className="text-center text-[11px] text-gray-600 mt-3">
           {mode === "signup" ? t("login.hasAccount") : t("login.noAccount")}{" "}
           <button onClick={() => setMode(mode === "signup" ? "signin" : "signup")}
             className="text-neon-blue hover:underline">
