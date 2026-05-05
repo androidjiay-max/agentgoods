@@ -365,6 +365,45 @@ export async function deleteProduct(productId: string): Promise<ActionResult> {
   );
 }
 
+/** Update an existing product (owner only via getCurrentUser). */
+export async function updateProduct(
+  productId: string,
+  data: { name?: string; description?: string; priceDollars?: number; isSubscription?: boolean; schemaString?: string },
+): Promise<ActionResult> {
+  const user = await getCurrentUser();
+  const updateData: Record<string, unknown> = {};
+
+  if (data.name !== undefined) {
+    const err = validateString(data.name, "Product name");
+    if (err) return err;
+    updateData.name = data.name.trim();
+  }
+  if (data.description !== undefined) {
+    updateData.description = data.description.trim();
+  }
+  if (data.priceDollars !== undefined) {
+    if (data.priceDollars <= 0) return { success: false, error: "Price must be greater than zero." };
+    updateData.price = Math.round(data.priceDollars * 100);
+  }
+  if (data.isSubscription !== undefined) {
+    updateData.isSubscription = data.isSubscription;
+  }
+  if (data.schemaString !== undefined) {
+    if (data.schemaString.trim()) {
+      try { JSON.parse(data.schemaString); } catch { return { success: false, error: "Schema must be valid JSON." }; }
+      updateData.schemaString = data.schemaString.trim();
+    }
+  }
+
+  return withRevalidation(async () => {
+    const product = await prisma.product.findUnique({ where: { id: productId } });
+    if (!product || product.ownerId !== user.id) {
+      throw new Error("Not authorized to edit this product");
+    }
+    await prisma.product.update({ where: { id: productId }, data: updateData });
+  });
+}
+
 /**
  * Refund a purchase transaction.
  * Restores buyer balance, decrements seller balance + earnings, creates REFUND ledger entry.

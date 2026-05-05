@@ -583,11 +583,14 @@ function ProductCard({
 }) {
   const { t } = useI18n()
   const toast = useToast()
+  const [expanded, setExpanded] = useState(false)
+  const [editing, setEditing] = useState(false)
   const isOfficial = !product.ownerId
   const isOwn = product.ownerId === currentUserId
 
   return (
-    <div className="panel rounded-lg p-5 border border-gray-800 hover:border-neon-purple/20 transition-all group relative">
+    <div onClick={() => setExpanded(!expanded)}
+      className={`panel rounded-lg border border-gray-800 hover:border-neon-purple/20 transition-all group relative cursor-pointer ${expanded ? "p-5" : "p-5"}`}>
       {/* Owner badge */}
       {showOwner && (
         <div className="absolute top-3 left-3 z-10">
@@ -654,16 +657,53 @@ function ProductCard({
         </p>
       </div>
 
-      {/* Delete (own products only) */}
+      {/* Action buttons (own products only) */}
       {isOwn && (
-        <button onClick={async () => {
-          if (!confirm(`Delete "${product.name}"?`)) return
-          onDelete?.(product.id)
-          const r = await deleteProduct(product.id)
-          if (!r.success) toast.addToast(r.error ?? "Deletion failed.", "error")
-        }} className="absolute top-3 right-3 text-gray-700 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1">
-          <Trash2 size={15} />
-        </button>
+        <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
+          <button onClick={(e) => { e.stopPropagation(); setExpanded(!expanded) }}
+            className="text-gray-600 hover:text-neon-blue p-1" title="Toggle details">
+            <ChevronDown size={15} className={`transition-transform ${expanded ? "rotate-180" : ""}`} />
+          </button>
+          <button onClick={async (e) => {
+            e.stopPropagation()
+            if (!confirm(`Delete "${product.name}"?`)) return
+            onDelete?.(product.id)
+            const r = await deleteProduct(product.id)
+            if (!r.success) toast.addToast(r.error ?? "Deletion failed.", "error")
+          }} className="text-gray-700 hover:text-red-500 p-1" title="Delete">
+            <Trash2 size={15} />
+          </button>
+        </div>
+      )}
+
+      {/* Expanded detail panel */}
+      {expanded && (
+        <div className="mt-4 pt-4 border-t border-border-subtle space-y-3 text-xs">
+          <div>
+            <span className="text-gray-600 font-mono">ID</span>
+            <p className="font-mono text-gray-400 mt-0.5 break-all">{product.id}</p>
+          </div>
+          <div>
+            <span className="text-gray-600 font-mono">Description</span>
+            <p className="text-gray-400 mt-0.5">{product.description || "—"}</p>
+          </div>
+          {product.schemaString && (
+            <div>
+              <span className="text-gray-600 font-mono">Full Schema</span>
+              <pre className="code-block mt-1 text-[10px] max-h-40 overflow-y-auto whitespace-pre-wrap">{product.schemaString}</pre>
+            </div>
+          )}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <span className="text-gray-600 font-mono">Created</span>
+              <p className="text-gray-400 mt-0.5">{new Date(product.createdAt).toLocaleDateString()}</p>
+            </div>
+            <div>
+              <span className="text-gray-600 font-mono">Type</span>
+              <p className="text-gray-400 mt-0.5">{product.isSubscription ? "Subscription" : "One-time"}</p>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
