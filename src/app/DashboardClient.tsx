@@ -85,10 +85,10 @@ export default function DashboardClient({
       {/* ── Header ── */}
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-5 border-b border-gray-800/50">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-neon-blue drop-shadow-[0_0_8px_rgba(0,243,255,0.5)]">
-            AGENT<span className="text-white">GOODS</span>
+          <h1 className="text-lg font-mono font-bold tracking-tight text-neon-blue">
+            AGENT<span className="text-gray-300">GOODS</span>
           </h1>
-          <p className="text-xs text-gray-500 mt-0.5">M2M Protocol Gateway</p>
+          <p className="text-[10px] text-gray-600 mt-0.5 font-mono">M2M Protocol Gateway — v0.1</p>
         </div>
 
         {/* KPI Cards */}
@@ -359,7 +359,7 @@ function DepositPanel() {
   }
 
   return (
-    <div className="glass rounded-2xl p-6 border border-neon-purple/20 bg-gradient-to-r from-neon-purple/5 to-transparent mb-6">
+    <div className="panel rounded-lg p-6 border border-neon-purple/20 bg-gradient-to-r from-neon-purple/5 to-transparent mb-6">
       <div className="flex flex-wrap items-center gap-3">
         <DollarSign size={18} className="text-neon-purple" />
         <span className="text-sm font-bold uppercase tracking-wide text-gray-300 mr-2">{t("deposit.title")}</span>
@@ -413,7 +413,7 @@ function AgentsList({ agents, onDelete }: { agents: Agent[]; onDelete: (id: stri
         const isOver = agent.currentSpend > agent.maxBudget
 
         return (
-          <div key={agent.id} className="glass rounded-2xl p-5 border border-gray-800 hover:border-neon-blue/20 transition-all group">
+          <div key={agent.id} className="panel rounded-lg p-5 border border-gray-800 hover:border-neon-blue/20 transition-all group">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-3">
@@ -492,15 +492,15 @@ function SellerProducts({
     <div>
       {/* Seller KPI bar */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <div className="glass rounded-2xl p-4 border border-green-500/20">
+        <div className="panel rounded-lg p-4 border border-green-500/20">
           <p className="text-[11px] text-gray-500 uppercase tracking-wider mb-1">{t("dashboard.totalEarnings")}</p>
           <p className="text-2xl font-mono text-green-400 font-bold">+${fmtCents(totalEarnings)}</p>
         </div>
-        <div className="glass rounded-2xl p-4 border border-neon-blue/20">
+        <div className="panel rounded-lg p-4 border border-neon-blue/20">
           <p className="text-[11px] text-gray-500 uppercase tracking-wider mb-1">{t("dashboard.productsListed")}</p>
           <p className="text-2xl font-mono font-bold">{products.length}</p>
         </div>
-        <div className="glass rounded-2xl p-4 border border-neon-purple/20">
+        <div className="panel rounded-lg p-4 border border-neon-purple/20">
           <p className="text-[11px] text-gray-500 uppercase tracking-wider mb-1">{t("dashboard.totalSales")}</p>
           <p className="text-2xl font-mono font-bold">{totalSales}</p>
         </div>
@@ -587,7 +587,7 @@ function ProductCard({
   const isOwn = product.ownerId === currentUserId
 
   return (
-    <div className="glass rounded-2xl p-5 border border-gray-800 hover:border-neon-purple/20 transition-all group relative">
+    <div className="panel rounded-lg p-5 border border-gray-800 hover:border-neon-purple/20 transition-all group relative">
       {/* Owner badge */}
       {showOwner && (
         <div className="absolute top-3 left-3 z-10">
@@ -745,7 +745,7 @@ function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="w-16 h-16 rounded-2xl bg-white/5 border border-gray-800 flex items-center justify-center mb-6">
+      <div className="w-16 h-16 rounded-lg bg-white/5 border border-gray-800 flex items-center justify-center mb-6">
         <Icon size={28} className="text-gray-600" />
       </div>
       <h3 className="text-xl font-bold text-gray-300 mb-2">{title}</h3>
@@ -777,7 +777,7 @@ function CreateAgentModal({ onClose }: { onClose: () => void }) {
   if (created) {
     return (
       <ModalOverlay onClose={onClose}>
-        <div className="glass rounded-2xl p-8 max-w-lg w-full mx-4 border border-green-500/30">
+        <div className="panel rounded-lg p-8 max-w-lg w-full mx-4 border border-green-500/30">
           <div className="text-center">
             <div className="w-14 h-14 rounded-full bg-green-500/10 border border-green-500/30 flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 size={28} className="text-green-400" />
@@ -817,7 +817,7 @@ function CreateAgentModal({ onClose }: { onClose: () => void }) {
 
   return (
     <ModalOverlay onClose={onClose}>
-      <div className="glass rounded-2xl p-8 max-w-md w-full mx-4 border border-neon-blue/20">
+      <div className="panel rounded-lg p-8 max-w-md w-full mx-4 border border-neon-blue/20">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-neon-blue/10 border border-neon-blue/20 flex items-center justify-center">
@@ -893,7 +893,7 @@ function CreateProductModal({ onClose }: { onClose: () => void }) {
 
   return (
     <ModalOverlay onClose={onClose}>
-      <div className="glass rounded-2xl p-8 max-w-lg w-full mx-4 border border-neon-purple/20 max-h-[90vh] overflow-y-auto">
+      <div className="panel rounded-lg p-8 max-w-lg w-full mx-4 border border-neon-purple/20 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-neon-purple/10 border border-neon-purple/20 flex items-center justify-center">

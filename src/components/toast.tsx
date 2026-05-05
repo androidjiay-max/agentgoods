@@ -99,7 +99,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
   return (
     <div
       role="alert"
-      className={`pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-xl text-sm font-medium shadow-2xl border backdrop-blur-md max-w-md animate-slide-up ${config.bg} ${config.text}`}
+      className={`pointer-events-auto flex items-start gap-3 px-4 py-3 rounded text-sm font-medium shadow-lg border max-w-md animate-slide-up ${config.bg} ${config.text}`}
     >
       <Icon size={17} className={`shrink-0 mt-0.5 ${config.iconColor}`} />
       <span className="flex-1 whitespace-pre-wrap leading-snug">{toast.message}</span>

@@ -51,7 +51,7 @@ export default function LandingPage() {
             { icon: ShoppingCart, title: t("landing.step2Title"), desc: t("landing.step2Desc") },
             { icon: Activity, title: t("landing.step3Title"), desc: t("landing.step3Desc") },
           ].map(({ icon: Icon, title, desc }) => (
-            <div key={title} className="glass rounded-2xl p-6 border border-gray-800 hover:border-neon-blue/20 transition-all text-center">
+            <div key={title} className="panel rounded-2xl p-6 border border-gray-800 hover:border-neon-blue/20 transition-all text-center">
               <div className="w-12 h-12 rounded-xl bg-neon-blue/10 border border-neon-blue/20 flex items-center justify-center mx-auto mb-4">
                 <Icon size={22} className="text-neon-blue" />
               </div>
@@ -63,7 +63,7 @@ export default function LandingPage() {
       </section>
 
       <section className="px-6 lg:px-10 py-20 max-w-6xl mx-auto">
-        <div className="glass rounded-3xl p-10 lg:p-16 border border-gray-800 text-center">
+        <div className="panel rounded-3xl p-10 lg:p-16 border border-gray-800 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neon-purple/10 border border-neon-purple/20 text-xs text-neon-purple mb-6">
             <Store size={14} /> {t("landing.sellerBadge")}
           </div>
