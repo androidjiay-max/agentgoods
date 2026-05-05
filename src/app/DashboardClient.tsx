@@ -871,6 +871,10 @@ function CreateProductModal({ onClose }: { onClose: () => void }) {
   const [isSubscription, setIsSubscription] = useState(false)
   const [schema, setSchema] = useState("")
   const [loading, setLoading] = useState(false)
+  const [mode, setMode] = useState<"manual" | "paste">("manual")
+  const [rawDoc, setRawDoc] = useState("")
+  const [parsing, setParsing] = useState(false)
+  const [parseError, setParseError] = useState("")
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => { inputRef.current?.focus() }, [])
@@ -879,6 +883,33 @@ function CreateProductModal({ onClose }: { onClose: () => void }) {
     window.addEventListener("keydown", onKey)
     return () => window.removeEventListener("keydown", onKey)
   }, [onClose])
+
+  async function handleParse() {
+    if (!rawDoc.trim()) return
+    setParsing(true)
+    setParseError("")
+    try {
+      const res = await fetch("/api/v1/schema/parse", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ raw: rawDoc }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        if (data.data.suggestedName) setName(data.data.suggestedName)
+        if (data.data.suggestedDescription) setDescription(data.data.suggestedDescription)
+        if (data.data.toolSchema) setSchema(JSON.stringify(data.data.toolSchema, null, 2))
+        setMode("manual")
+        toast.addToast("Schema parsed successfully!")
+      } else {
+        setParseError(data.error?.message ?? "Parse failed")
+      }
+    } catch {
+      setParseError("Network error. Try again.")
+    } finally {
+      setParsing(false)
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -905,6 +936,40 @@ function CreateProductModal({ onClose }: { onClose: () => void }) {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Mode toggle */}
+          <div className="flex bg-dark-bg rounded p-0.5 border border-border-subtle">
+            {(["manual", "paste"] as const).map((m) => (
+              <button key={m} type="button" onClick={() => setMode(m)}
+                className={`flex-1 py-1.5 rounded-sm text-xs font-mono transition-all ${mode === m ? "bg-neon-purple/10 text-neon-purple" : "text-gray-600 hover:text-gray-400"}`}>
+                {m === "manual" ? "Manual" : "Paste API Doc"}
+              </button>
+            ))}
+          </div>
+
+          {mode === "paste" && (
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-1.5">API Documentation</label>
+              <textarea
+                placeholder='Paste OpenAPI/Swagger JSON here, or describe your API with parameters...'
+                className="w-full bg-dark-bg border border-border-subtle rounded px-4 py-2.5 text-xs font-mono focus:border-neon-purple outline-none resize-none"
+                rows={8}
+                value={rawDoc}
+                onChange={(e) => { setRawDoc(e.target.value); setParseError("") }}
+              />
+              {parseError && <p className="text-[11px] text-red-400 mt-1 font-mono">{parseError}</p>}
+              <button type="button" onClick={handleParse} disabled={parsing || !rawDoc.trim()}
+                className="mt-2 w-full py-2 rounded bg-neon-purple/20 text-neon-purple border border-neon-purple/30 hover:bg-neon-purple/30 text-sm font-mono disabled:opacity-30 transition-all">
+                {parsing ? "Parsing…" : "Parse & Auto-fill"}
+              </button>
+              <p className="text-[10px] text-gray-600 mt-2 leading-relaxed">
+                Paste an OpenAPI JSON doc or describe your API with parameters like:<br />
+                <code className="text-gray-500">- city: string — City name</code><br />
+                <code className="text-gray-500">- units: metric|imperial — Temperature unit</code>
+              </p>
+            </div>
+          )}
+
+          {mode === "manual" && (<>
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-1.5">{t("product.name")}</label>
             <input ref={inputRef} type="text" placeholder={t("product.namePlaceholder")}
@@ -952,6 +1017,7 @@ function CreateProductModal({ onClose }: { onClose: () => void }) {
               {loading ? t("product.publishing") : <><Sparkles size={15} /> {t("product.publishBtn")}</>}
             </button>
           </div>
+          </>)}
         </form>
       </div>
     </ModalOverlay>
