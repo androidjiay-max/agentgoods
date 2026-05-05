@@ -45,19 +45,15 @@ export default function LoginPage() {
         <Languages size={14} /> {t("langSwitch")}
       </button>
 
-      <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-        {/* Left: Login form */}
-        <div>
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-2">
-              <Terminal size={16} className="text-neon-blue" />
-              <h1 className="text-xs font-mono text-gray-500 tracking-wide">
-                agentgoods.io <span className="text-gray-700">— v0.1</span>
-              </h1>
-            </div>
+      <div className="w-full max-w-sm">
+        <div className="mb-6 text-center">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <Terminal size={16} className="text-neon-blue" />
+            <h1 className="text-xs font-mono text-gray-500 tracking-wide">agentgoods.io</h1>
           </div>
+        </div>
 
-          <form onSubmit={handleSubmit} className="panel p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="panel p-6 space-y-4">
             <div className="flex bg-dark-bg rounded p-0.5 border border-border-subtle">
               {(["signin", "signup"] as Mode[]).map((m) => (
                 <button key={m} type="button" onClick={() => { setMode(m); setError(""); setSuccess("") }}
@@ -118,46 +114,6 @@ export default function LoginPage() {
             </button>
           </div>
         </div>
-
-        {/* Right: Code example */}
-        <div className="hidden lg:block">
-          <div className="panel p-5">
-            <div className="flex items-center gap-2 mb-4 text-[10px] text-gray-600 font-mono">
-              <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500/60" />
-              <span className="inline-block w-2.5 h-2.5 rounded-full bg-yellow-500/40" />
-              <span className="inline-block w-2.5 h-2.5 rounded-full bg-red-500/40" />
-              <span className="ml-2">agent ~ curl</span>
-            </div>
-
-            <div className="code-block space-y-3 text-[11px] leading-relaxed">
-              <div><span className="text-gray-600"># 1. Browse catalog</span></div>
-              <div><span className="text-neon-purple">$</span> curl agentgoods.io/api/v1/catalog</div>
-              <div className="text-gray-500 pl-4 border-l border-border-subtle ml-1">
-                {`{ "name": "Weather API",  "price": 0.50 }`}<br />
-                {`{ "name": "Stock Data",   "price": 2.00 }`}
-              </div>
-              <div className="pt-2"><span className="text-gray-600"># 2. Purchase access</span></div>
-              <div>
-                <span className="text-neon-purple">$</span> curl -X POST agentgoods.io/api/v1/transact \<br />
-                <span className="text-gray-700 ml-4">-H</span> <span className="text-neon-blue">{"\"Authorization: Bearer ag_...\""}</span> \<br />
-                <span className="text-gray-700 ml-4">-d</span> <span className="text-terminal-green">{`'{"productId":"..."}'`}</span>
-              </div>
-              <div className="text-terminal-green pl-4 border-l border-border-subtle ml-1">
-                {`{ "access_token": "tok_...", "success": true }`}
-              </div>
-              <div className="pt-2"><span className="text-gray-600"># 3. Consume API</span></div>
-              <div><span className="text-neon-purple">$</span> curl -X POST agentgoods.io/services/access/...</div>
-              <div className="text-terminal-green pl-4 border-l border-border-subtle ml-1">
-                {`{ "temperature": 22, "city": "Tokyo" }`}
-              </div>
-            </div>
-
-            <p className="text-[10px] text-gray-700 mt-4 font-mono leading-relaxed">
-              M2M commerce layer. AI agents autonomously discover, purchase, and consume APIs. Humans register agents and earn from API sales.
-            </p>
-          </div>
-        </div>
-      </div>
     </main>
   )
 }
