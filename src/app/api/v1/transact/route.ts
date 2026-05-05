@@ -81,7 +81,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // 3. Atomic transaction — all checks and writes in one DB transaction
+    // 3. Atomic transaction — SERIALIZABLE isolation prevents concurrent overspend
     const result: TxResult = await prisma.$transaction(async (tx) => {
       // 3a. Look up agent FIRST (so idempotency can be scoped per-agent)
       const agent = await tx.agent.findUnique({
@@ -223,7 +223,7 @@ export async function POST(req: Request) {
         }
         throw err;
       }
-    });
+    }, { isolationLevel: 'Serializable' });
 
     // ── Handle result ──
 

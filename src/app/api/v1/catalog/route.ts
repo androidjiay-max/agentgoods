@@ -12,6 +12,19 @@ const MAX_LIMIT = 100;
 export async function GET(req: NextRequest) {
   const rid = requestId();
 
+  // Require auth: either Bearer token (agent) or session cookie (dashboard)
+  const authHeader = req.headers.get("authorization");
+  const cookieHeader = req.headers.get("cookie");
+  const hasBearer = authHeader?.startsWith("Bearer ");
+  const hasSession = cookieHeader?.includes("sb-");
+
+  if (!hasBearer && !hasSession) {
+    return apiError(401, ErrorCode.AUTH_MISSING,
+      "Authentication required. Provide a Bearer token or sign in.",
+      { requestId: rid },
+    );
+  }
+
   // Rate limit
   const ip = req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip") ?? "unknown";
   const rl = checkRateLimit(`catalog:${ip}`, DEFAULT_CONFIG);

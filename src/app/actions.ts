@@ -452,6 +452,6 @@ export async function refundTransaction(
       error: err instanceof Error ? err.message : String(err),
       transactionId,
     });
-    return { success: false, error: err instanceof Error ? err.message : "Refund failed." };
+    return { success: false, error: "Refund could not be processed. Please try again." };
   }
 }

@@ -32,49 +32,24 @@ async function getProductStats() {
 export default async function Page() {
   const user = await getOrCreateDefaultUser();
 
-  // ── Buyer data ──
-  const agents = await prisma.agent.findMany({
-    where: { userId: user.id },
-    orderBy: { createdAt: "desc" },
-  });
-
-  // ── Seller data ──
-  const myProducts = await prisma.product.findMany({
-    where: { ownerId: user.id },
-    orderBy: { createdAt: "desc" },
-  });
-
-  // ── Catalog (all available products, for both discovery & display) ──
-  const allProducts = await prisma.product.findMany({
-    orderBy: { createdAt: "desc" },
-  });
-
-  // ── Ledger ──
-  const transactions = await prisma.ledgerTransaction.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 50,
-    include: { agent: true, product: true },
-  });
-
-  // Buyer's own transactions
-  const buyerTransactions = await prisma.ledgerTransaction.findMany({
-    where: { userId: user.id },
-    orderBy: { createdAt: "desc" },
-    take: 50,
-    include: { agent: true, product: true },
-  });
-
-  // ── Stats ──
-  const productStats = await getProductStats();
-
-  // Platform revenue: purchases where product has NO owner (official AgentGoods products)
-  const platformRevenueResult = await prisma.ledgerTransaction.aggregate({
-    where: {
-      type: "PURCHASE",
-      product: { ownerId: null },
-    },
-    _sum: { amount: true },
-  });
+  // Parallelize all independent queries (6 sequential → 1 batch)
+  const [
+    agents,
+    myProducts,
+    allProducts,
+    transactions,
+    buyerTransactions,
+    productStats,
+    platformRevenueResult,
+  ] = await Promise.all([
+    prisma.agent.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" } }),
+    prisma.product.findMany({ where: { ownerId: user.id }, orderBy: { createdAt: "desc" } }),
+    prisma.product.findMany({ orderBy: { createdAt: "desc" } }),
+    prisma.ledgerTransaction.findMany({ orderBy: { createdAt: "desc" }, take: 50, include: { agent: true, product: true } }),
+    prisma.ledgerTransaction.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" }, take: 50, include: { agent: true, product: true } }),
+    getProductStats(),
+    prisma.ledgerTransaction.aggregate({ where: { type: "PURCHASE", product: { ownerId: null } }, _sum: { amount: true } }),
+  ]);
 
   return (
     <main className="min-h-screen bg-dark-bg text-white selection:bg-neon-blue selection:text-black">

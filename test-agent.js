@@ -71,7 +71,9 @@ async function main() {
 
   let catalog;
   try {
-    const result = await fetchJSON(`${BASE_URL}/api/v1/catalog`);
+    const result = await fetchJSON(`${BASE_URL}/api/v1/catalog`, {
+      headers: { Authorization: `Bearer ${API_KEY}` },
+    });
     catalog = result.data;
     log("📦", `Found ${catalog.length} available product(s)`);
     for (const p of catalog) {
