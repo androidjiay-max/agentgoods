@@ -30,6 +30,23 @@ export async function updateSession(request: NextRequest) {
     },
   )
 
+  const hostname = request.headers.get("host") ?? ""
+  const isMarketingDomain = hostname.includes("agentgoods.shop") ||
+    hostname.includes("agentgoods-shop") // Vercel preview domain
+
+  // Marketing domain (agentgoods.shop) — serve landing page, no auth
+  if (isMarketingDomain) {
+    const path = request.nextUrl.pathname
+    // Redirect root to landing page
+    if (path === "/") {
+      const url = request.nextUrl.clone()
+      url.pathname = "/landing"
+      return NextResponse.rewrite(url)
+    }
+    // Allow landing page, static assets, API routes through without auth
+    return supabaseResponse
+  }
+
   // Refresh the session — important to keep the cookie fresh
   const { data: { user } } = await supabase.auth.getUser()
 
