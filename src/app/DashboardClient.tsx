@@ -259,6 +259,7 @@ export default function DashboardClient({
             products={localMyProducts}
             stats={productStats}
             totalEarnings={user.earnings}
+            currentUserId={user.id}
             onDelete={(id) => setLocalMyProducts((prev) => prev.filter((p) => p.id !== id))}
           />
         )}
@@ -469,12 +470,13 @@ function AgentsList({ agents, onDelete }: { agents: Agent[]; onDelete: (id: stri
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function SellerProducts({
-  products, stats, totalEarnings, onDelete,
+  products, stats, totalEarnings, onDelete, currentUserId,
 }: {
   products: Product[]
   stats: Record<string, ProductStats>
   totalEarnings: number
   onDelete?: (id: string) => void
+  currentUserId: string
 }) {
   const { t } = useI18n()
   // Compute summary
@@ -517,6 +519,7 @@ function SellerProducts({
               purchases={s?.purchases ?? 0}
               revenue={s?.revenue ?? 0}
               showOwner={false}
+              currentUserId={currentUserId}
               onDelete={onDelete}
             />
           )
