@@ -657,14 +657,14 @@ function ProductCard({
         </p>
       </div>
 
-      {/* Action bar (own products only) */}
-      {isOwn && (
-        <div className="flex gap-1 pt-3 border-t border-border-subtle mt-3">
-          <button onClick={() => setExpanded(!expanded)}
-            className="flex items-center gap-1 px-3 py-1.5 rounded text-[11px] font-mono text-gray-400 hover:text-neon-blue hover:bg-neon-blue/5 border border-transparent hover:border-neon-blue/20 transition-all">
-            <ChevronDown size={12} className={`transition-transform ${expanded ? "rotate-180" : ""}`} />
-            Detail
-          </button>
+      {/* Action bar — Detail for all, Edit/Delete only for own */}
+      <div className="flex gap-1 pt-3 border-t border-border-subtle mt-3">
+        <button onClick={() => setExpanded(!expanded)}
+          className="flex items-center gap-1 px-3 py-1.5 rounded text-[11px] font-mono text-gray-400 hover:text-neon-blue hover:bg-neon-blue/5 border border-transparent hover:border-neon-blue/20 transition-all">
+          <ChevronDown size={12} className={`transition-transform ${expanded ? "rotate-180" : ""}`} />
+          Detail
+        </button>
+        {isOwn && (<>
           <button onClick={() => setEditing(true)}
             className="flex items-center gap-1 px-3 py-1.5 rounded text-[11px] font-mono text-gray-400 hover:text-neon-purple hover:bg-neon-purple/5 border border-transparent hover:border-neon-purple/20 transition-all">
             <Pencil size={12} />
@@ -680,8 +680,8 @@ function ProductCard({
             <Trash2 size={12} />
             Delete
           </button>
-        </div>
-      )}
+        </>)}
+      </div>
 
       {/* Expanded detail panel */}
       {expanded && (
