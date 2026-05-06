@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import type { User, Agent, Product, LedgerTransaction } from "@prisma/client"
-import { createAgent, deleteAgent, createProduct, deleteProduct, depositFunds } from "./actions"
+import { createAgent, deleteAgent, createProduct, deleteProduct, depositFunds, updateProduct } from "./actions"
 import type { CreateAgentResult } from "./actions"
 import {
   Bot, Package, Activity, Key, Trash2, CreditCard,
@@ -715,6 +715,8 @@ function ProductCard({
           </div>
         </div>
       )}
+
+      {editing && <EditProductModal product={product} onClose={() => setEditing(false)} />}
     </div>
   )
 }
@@ -1068,6 +1070,92 @@ function CreateProductModal({ onClose }: { onClose: () => void }) {
             </button>
           </div>
           </>)}
+        </form>
+      </div>
+    </ModalOverlay>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Edit Product Modal
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function EditProductModal({ product, onClose }: { product: Product; onClose: () => void }) {
+  const { t } = useI18n()
+  const toast = useToast()
+  const [name, setName] = useState(product.name)
+  const [description, setDescription] = useState(product.description)
+  const [price, setPrice] = useState(product.price / 100)
+  const [isSubscription, setIsSubscription] = useState(product.isSubscription)
+  const [schema, setSchema] = useState(product.schemaString ?? "")
+  const [loading, setLoading] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => { inputRef.current?.focus() }, [])
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) { if (e.key === "Escape") onClose() }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [onClose])
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!name.trim()) { toast.addToast(t("toast.productNameRequired"), "error"); return }
+    if (price <= 0) { toast.addToast(t("toast.priceRequired"), "error"); return }
+    setLoading(true)
+    const result = await updateProduct(product.id, { name, description, priceDollars: price, isSubscription, schemaString: schema || undefined })
+    setLoading(false)
+    if (result.success) { toast.addToast(`"${name.trim()}" updated`); onClose() }
+    else toast.addToast(result.error ?? t("toast.createFailed"), "error")
+  }
+
+  return (
+    <ModalOverlay onClose={onClose}>
+      <div className="panel rounded-lg p-8 max-w-lg w-full mx-4 border border-neon-purple/20 max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <Store size={20} className="text-neon-purple" />
+            <h3 className="text-lg font-bold">Edit Product</h3>
+          </div>
+          <button onClick={onClose} className="text-gray-600 hover:text-white p-1"><X size={20} /></button>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-1.5">{t("product.name")}</label>
+            <input ref={inputRef} type="text" className="w-full bg-dark-bg border border-border-subtle rounded px-4 py-2.5 text-sm focus:border-neon-purple outline-none"
+              value={name} onChange={(e) => setName(e.target.value)} maxLength={200} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-1.5">{t("product.description")}</label>
+            <textarea className="w-full bg-dark-bg border border-border-subtle rounded px-4 py-2.5 text-sm focus:border-neon-purple outline-none resize-none"
+              rows={3} value={description} onChange={(e) => setDescription(e.target.value)} maxLength={500} />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-1.5">{t("product.price")}</label>
+              <input type="number" min={0.01} step={0.01} className="w-full bg-dark-bg border border-border-subtle rounded pl-8 pr-4 py-2.5 text-sm focus:border-neon-purple outline-none"
+                value={price} onChange={(e) => setPrice(Number(e.target.value))} />
+            </div>
+            <div className="flex items-end pb-1">
+              <label className="flex items-center gap-3 cursor-pointer px-4 py-2.5 rounded bg-dark-bg border border-border-subtle hover:border-neon-purple/50 w-full">
+                <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${isSubscription ? "bg-neon-purple border-neon-purple" : "border-gray-600"}`}>
+                  {isSubscription && <CheckCircle2 size={12} className="text-white" />}
+                </div>
+                <span className="text-sm text-gray-300">{t("product.subscription")}</span>
+              </label>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-1.5">{t("product.schema")} <span className="text-gray-600 font-normal">({t("product.schemaOptional")})</span></label>
+            <textarea className="w-full bg-dark-bg border border-border-subtle rounded px-4 py-2.5 text-xs font-mono focus:border-neon-purple outline-none resize-none"
+              rows={4} value={schema} onChange={(e) => setSchema(e.target.value)} />
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button type="button" onClick={onClose} className="flex-1 px-4 py-2.5 rounded bg-white/5 text-gray-400 border border-gray-700 hover:bg-white/10 text-sm">{t("common.cancel")}</button>
+            <button type="submit" disabled={loading} className="flex-1 px-4 py-2.5 rounded bg-neon-purple text-white font-bold hover:bg-neon-purple/90 text-sm disabled:opacity-50 flex items-center justify-center gap-2">
+              {loading ? t("common.loading") : "Save Changes"}
+            </button>
+          </div>
         </form>
       </div>
     </ModalOverlay>
